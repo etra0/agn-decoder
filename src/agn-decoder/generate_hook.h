@@ -4,13 +4,14 @@
 #include <stdlib.h>
 #include <stdbool.h>
 #include <assert.h>
+#define HOOK_SIZE (128 / 8)
 
 struct texture {
     FILE *f;
     size_t size;
 };
 
-static const size_t HOOK_SIZE = 128 / 8;
+
 
 size_t count_char(uint8_t *arr, size_t sz, uint8_t c) {
     size_t count = 0;

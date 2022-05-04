@@ -161,7 +161,7 @@ void parse_all_mesh(struct context *ctx, struct mesh **m, uint32_t *n_meshes) {
         parse_mesh(&mesh[i], temp);
     }
 
-    sprintf(ctx->output_name, "%s.obj", k.pid);
+    sprintf(ctx->output_name, "%.*s.obj", k.pid_len, k.pid);
     free(k.key); free(k.pid);
 }
 
