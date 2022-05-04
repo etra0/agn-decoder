@@ -49,7 +49,7 @@ void generate_obj_file(const char *name, struct mesh *m, size_t n_meshes) {
         fprintf(f, "o %s\n", m[i].name);
 
         for (size_t nv = 0; nv < m[i].n_vertex; nv++) {
-            // Write all the 
+            // write the vertex nodes.
             fprintf(f, "v %f %f %f\n",
                     m[i].position[nv].elements[0],
                     m[i].position[nv].elements[1],
@@ -57,7 +57,7 @@ void generate_obj_file(const char *name, struct mesh *m, size_t n_meshes) {
         }
 
         for (size_t nv = 0; nv < m[i].n_vertex; nv++) {
-            // Write all the 
+            // vertex normal
             fprintf(f, "vn %f %f %f\n",
                     m[i].normal[nv].elements[0],
                     m[i].normal[nv].elements[1],
@@ -65,19 +65,21 @@ void generate_obj_file(const char *name, struct mesh *m, size_t n_meshes) {
         }
 
         for (size_t nv = 0; nv < m[i].n_vertex; nv++) {
-            // Write all the 
+            // write the uvs
             fprintf(f, "vt %f %f\n",
                     m[i].uv[nv].elements[0],
                     m[i].uv[nv].elements[1]);
         }
 
         for (size_t n_ix = 0; n_ix < m[i].n_indices; n_ix+= 3) {
+            // face indices
             fprintf(f, "f %lu %lu %lu\n", 
                     m[i].indices[n_ix]     + current_ix,
                     m[i].indices[n_ix + 1] + current_ix,
                     m[i].indices[n_ix + 2] + current_ix);
         }
 
+        // The vertex indices are contiguous so we need to offset the faces.
         current_ix += m[i].n_vertex;
     }
     fclose(f);
