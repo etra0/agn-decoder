@@ -36,9 +36,10 @@ bool texture_can_ignore_path(const char *p) {
     return false;
 }
 
+// This function would find an array full of 0 valid, which is bogus.
 bool validate_hook(uint8_t *hook) {
-    uint8_t arr[HOOK_SIZE];
-    memcpy(arr, hook, sizeof(arr));
+    uint8_t arr[HOOK_SIZE] = {0};
+    memcpy(arr, hook, HOOK_SIZE);
     for (int i = 0; i < HOOK_SIZE; i++) {
         if (arr[i] == 0) continue;
         size_t repeats = count_char(arr, HOOK_SIZE, arr[i]);
@@ -64,14 +65,14 @@ void calculate_hook(const struct texture *textures, size_t n_textures, uint8_t *
     assert(largest_texture != NULL);
     fseek(largest_texture->f, largest_texture->size / 2, SEEK_SET);
 
-    while (!validate_hook(hook)) {
+    do {
         size_t read = fread(hook, sizeof(uint8_t), HOOK_SIZE, largest_texture->f);
         if (read < HOOK_SIZE) {
             fseek(largest_texture->f, largest_texture->size / 2, SEEK_SET);
             fread(hook, sizeof(uint8_t), HOOK_SIZE, largest_texture->f);
             break;
         }
-    }
+    } while (!validate_hook(hook));
 }
 
 void texture_free(struct texture *t) {

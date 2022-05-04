@@ -153,7 +153,6 @@ void parse_mesh(struct mesh *target, FILE *temp) {
                 fread(&target->normal[i], sizeof(float), 3, temp);
             }
 
-            // TODO: check if these two are in the correct order.
             if (target->attrs & MESH_ATTRS_VERTEX_DATA_TANGENT4) {
                 fread(&target->tangent[i], sizeof(float), 4, temp);
             }

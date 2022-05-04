@@ -41,6 +41,7 @@ void load_files(const char *file, struct context *ctx) {
     ctx->n_textures = n_textures;
     ctx->textures = malloc(sizeof(struct texture) * n_textures);
     memcpy(ctx->textures, texture_buffer, sizeof(struct texture ) * n_textures);
+    zip_close(zip);
 }
 
 int main(int argc, char *argv[]) {
@@ -60,9 +61,14 @@ int main(int argc, char *argv[]) {
     generate_obj_file(ctx.output_name, meshes, n_meshes);
     printf("generated %s successfully!\n", ctx.output_name);
 
-    // TODO: add back the free(hook);
     for (uint32_t i = 0; i < n_meshes; i++) {
         delete_mesh(&meshes[i]);
     }
+    free(meshes);
+
+    for (int i = 0; i < ctx.n_textures; i++) {
+        fclose(ctx.textures[i].f);
+    }
+    free(ctx.textures);
     return EXIT_SUCCESS;
 }

@@ -115,7 +115,7 @@ void parse_all_mesh(struct context *ctx, struct mesh **m, uint32_t *n_meshes) {
     FILE *f = ctx->model;
     struct keys k;
 
-    uint8_t hook[HOOK_SIZE];
+    uint8_t hook[HOOK_SIZE] = {0};
     size_t hook_size = sizeof(hook);
     calculate_hook(ctx->textures, ctx->n_textures, hook);
 
@@ -144,25 +144,26 @@ void parse_all_mesh(struct context *ctx, struct mesh **m, uint32_t *n_meshes) {
     fclose(f);
     ctx->model = temp;
 
-    fseek(temp, 0, SEEK_SET);
-    parse_header(temp, &k, hook, hook_size);
+    fseek(ctx->model, 0, SEEK_SET);
+    parse_header(ctx->model, &k, hook, hook_size);
 
-    read_metatag(temp);
-    read_metatag(temp);
+    read_metatag(ctx->model);
+    read_metatag(ctx->model);
 
     uint32_t _n_meshes;
-    fread(&_n_meshes, sizeof(uint32_t), 1, temp);
+    fread(&_n_meshes, sizeof(uint32_t), 1, ctx->model);
     *n_meshes = _n_meshes;
     printf("n_meshes: %d\n", _n_meshes);
 
     struct mesh *mesh = malloc(sizeof(struct mesh) * _n_meshes);
     *m = mesh;
     for (uint32_t i = 0; i < _n_meshes; i++) {
-        parse_mesh(&mesh[i], temp);
+        parse_mesh(&mesh[i], ctx->model);
     }
 
     sprintf(ctx->output_name, "%.*s.obj", k.pid_len, k.pid);
     free(k.key); free(k.pid);
+    fclose(ctx->model);
 }
 
 #endif
