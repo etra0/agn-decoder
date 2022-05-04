@@ -85,7 +85,6 @@ void generate_obj_file(const char *name, struct mesh *m, size_t n_meshes) {
     fclose(f);
 }
 
-
 void print_mesh(const struct mesh *m) {
     printf("id: %d\tname: %s\n", m->id, m->name);
 }

@@ -85,7 +85,10 @@ void parse_header(FILE *f, struct keys *k, uint8_t *hook, size_t hook_size) {
     // model id
     fseek(f, sizeof(uint32_t), SEEK_CUR);
 
-    assert(read_metatag(f) == 5);
+    uint8_t last_metatag = read_metatag(f);
+    if (last_metatag != 5) {
+        printf("Metatag %d != 5, invalid file!\n", last_metatag);
+    }
 
     unsigned char *basic_key, *product_id;
 

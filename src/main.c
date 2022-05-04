@@ -4,6 +4,18 @@
 #include <agn-decoder/parser.h>
 
 void load_files(const char *file, struct context *ctx) {
+    // Check the file is a valid one.
+    FILE *f = fopen(file, "r");
+    char tag[2];
+    fread(tag, sizeof(char), 2, f);
+    if (strncmp(tag, "PK", 2) != 0) {
+        printf("The file is not valid!\n");
+        fclose(f);
+        exit(EXIT_FAILURE);
+    }
+    fseek(f, 0, SEEK_SET);
+    fclose(f);
+
     struct zip_t *zip = zip_open(file, 0, 'r');
     struct texture texture_buffer[100];
     int n_textures = 0;

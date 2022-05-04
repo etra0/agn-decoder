@@ -11,8 +11,6 @@ struct texture {
     size_t size;
 };
 
-
-
 size_t count_char(uint8_t *arr, size_t sz, uint8_t c) {
     size_t count = 0;
     for (size_t i = 0; i < sz; i++) {
