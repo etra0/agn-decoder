@@ -73,7 +73,7 @@ void generate_obj_file(const char *name, struct mesh *m, size_t n_meshes) {
 
         for (size_t n_ix = 0; n_ix < m[i].n_indices; n_ix+= 3) {
             // face indices
-            fprintf(f, "f %lu %lu %lu\n", 
+            fprintf(f, "f %llu %llu %llu\n", 
                     m[i].indices[n_ix]     + current_ix,
                     m[i].indices[n_ix + 1] + current_ix,
                     m[i].indices[n_ix + 2] + current_ix);

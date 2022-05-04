@@ -58,7 +58,7 @@ void calculate_hook(const struct texture *textures, size_t n_textures, uint8_t *
             largest_texture = &textures[i];
         }
     }
-    printf("Size of largest texture = %llu\n", largest_texture->size);
+    printf("Size of largest texture = %zu\n", largest_texture->size);
 
     assert(largest_texture != NULL);
     fseek(largest_texture->f, largest_texture->size / 2, SEEK_SET);
