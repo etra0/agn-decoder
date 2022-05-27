@@ -63,32 +63,50 @@ uint64_t get_file_size(FILE *f) {
     return ftell(f);
 }
 
+enum metatag: uint8_t {
+    END = 0,
+    CENTER_OF_MASS = 1,
+    REVISION = 2,
+    BUILD_DATE = 3,
+    MODEL_ID = 4,
+    ENCRYPT_DATA = 5,
+
+    /* unused for this parser */
+    SARC_VALIDATION = 6,
+    DIFFUSE_RENDER_ONLY = 7,
+};
+
 void parse_header(FILE *f, struct keys *k, uint8_t *hook, size_t hook_size) {
     char tag[4];
     fread(tag, sizeof(char), sizeof(tag), f);
     assert(strncmp(tag, "m3dm", 4) == 0);
 
-    read_metatag(f);
+    bool should_run = true;
+    do {
+        enum metatag metatag;
+        fread(&metatag, sizeof(metatag), 1, f);
 
-    // read center of mass? 
-    read_center_of_mass(f);
-
-    read_metatag(f);
-    // revision, we don't care
-    fseek(f, sizeof(uint32_t), SEEK_CUR);
-
-    read_metatag(f);
-    // build date
-    fseek(f, sizeof(uint64_t), SEEK_CUR);
-
-    read_metatag(f);
-    // model id
-    fseek(f, sizeof(uint32_t), SEEK_CUR);
-
-    uint8_t last_metatag = read_metatag(f);
-    if (last_metatag != 5) {
-        printf("Metatag %d != 5, invalid file!\n", last_metatag);
-    }
+        switch (metatag) {
+            case CENTER_OF_MASS:
+                read_center_of_mass(f);
+                break;
+            case MODEL_ID:
+            case REVISION:
+                /* We don't care for the MODEL_ID, REVISION nor BUILD_DATE. */
+                fseek(f, sizeof(uint32_t), SEEK_CUR);
+                break;
+            case BUILD_DATE:
+                fseek(f, sizeof(uint64_t), SEEK_CUR);
+                break;
+            case ENCRYPT_DATA:
+                printf("[*] Found metatag ENCRYPT_DATA!\n");
+                should_run = false;
+                break;
+            default:
+                fprintf(stderr, "[-] Unknown metatag: %d\n", metatag);
+                exit(-1);
+        }
+    } while(should_run);
 
     unsigned char *basic_key, *product_id;
 
