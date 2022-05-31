@@ -86,7 +86,7 @@ void generate_obj_file(const char *name, struct mesh *m, size_t n_meshes) {
 }
 
 void print_mesh(const struct mesh *m) {
-    printf("id: %d\tname: %s\n", m->id, m->name);
+    printf("[*] id: %d\tname: %s\n", m->id, m->name);
 }
 
 void print_vec(const struct vec *v, uint32_t n_elements) {

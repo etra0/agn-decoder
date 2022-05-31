@@ -54,7 +54,7 @@ void read_center_of_mass(FILE *f) {
 uint8_t read_metatag(FILE *f) {
     uint8_t metatag;
     fread(&metatag, sizeof(metatag), 1, f);
-    printf("metatag: %u\n", metatag);
+    printf("[*] metatag: %u\n", metatag);
     return metatag;
 }
 
@@ -119,7 +119,7 @@ void parse_header(FILE *f, struct keys *k, uint8_t *hook, size_t hook_size) {
     fread(basic_key, sizeof(char), k->key_len, f);
     fread(product_id, sizeof(char), k->pid_len, f);
 
-    printf("basic_key_len: %u   product_id_len: %u\n", k->key_len, k->pid_len);
+    printf("[*] basic_key_len: %u   product_id_len: %u\n", k->key_len, k->pid_len);
 
     uint8_t *basic_key_decoded = decode(basic_key, k->key_len, hook, hook_size);
     uint8_t *product_id_decoded = decode(product_id, k->pid_len, hook, hook_size);
@@ -129,7 +129,7 @@ void parse_header(FILE *f, struct keys *k, uint8_t *hook, size_t hook_size) {
     k->key = basic_key_decoded;
     k->pid = product_id_decoded;
 
-    printf("pid_decoded: %.*s\n", 6, product_id_decoded);
+    printf("[*] pid_decoded: %.*s\n", 6, product_id_decoded);
 }
 
 void parse_all_mesh(struct context *ctx, struct mesh **m, uint32_t *n_meshes) {
@@ -161,7 +161,6 @@ void parse_all_mesh(struct context *ctx, struct mesh **m, uint32_t *n_meshes) {
     fwrite(data_decoded, sizeof(char), rest_file, temp);
 
     free(data_decoded); free(merger); free(data);
-    free(k.key); free(k.pid);
     fclose(f);
     ctx->model = temp;
 
@@ -174,7 +173,7 @@ void parse_all_mesh(struct context *ctx, struct mesh **m, uint32_t *n_meshes) {
     uint32_t _n_meshes;
     fread(&_n_meshes, sizeof(uint32_t), 1, ctx->model);
     *n_meshes = _n_meshes;
-    printf("n_meshes: %d\n", _n_meshes);
+    printf("[*] n_meshes: %d\n", _n_meshes);
 
     struct mesh *mesh = malloc(sizeof(struct mesh) * _n_meshes);
     *m = mesh;

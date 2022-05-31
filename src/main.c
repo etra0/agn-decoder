@@ -9,7 +9,7 @@ void load_files(const char *file, struct context *ctx) {
     char tag[2];
     fread(tag, sizeof(char), 2, f);
     if (strncmp(tag, "PK", 2) != 0) {
-        printf("The file is not valid!\n");
+        printf("[!] The file is not valid!\n");
         fclose(f);
         exit(EXIT_FAILURE);
     }
@@ -34,11 +34,11 @@ void load_files(const char *file, struct context *ctx) {
             free(buffer);
 
             if (!texture_can_ignore_path(name)) {
-                printf("Loaded texture %s\n", name);
+                printf("[*] Loaded texture %s\n", name);
                 texture_buffer[n_textures].size = bufsize;
                 texture_buffer[n_textures++].f = temp_file;
             } else if (strcmp("model", name) == 0) {
-                printf("Loaded model\n");
+                printf("[*] Loaded model\n");
                 ctx->model = temp_file;
             } else {
                 // In this case we don't care about the shadow textures and
@@ -58,12 +58,12 @@ void load_files(const char *file, struct context *ctx) {
 
 int main(int argc, char *argv[]) {
     if (argc != 2) {
-        printf("You need to pass the file.\n");
+        printf("[!] You need to pass the file.\n");
         return EXIT_FAILURE;
     }
 
     struct context ctx;
-    printf("reading %s\n", argv[1]);
+    printf("[*] reading %s\n", argv[1]);
 
     load_files(argv[1], &ctx);
 
@@ -71,7 +71,7 @@ int main(int argc, char *argv[]) {
     uint32_t n_meshes;
     parse_all_mesh(&ctx, &meshes, &n_meshes);
     generate_obj_file(ctx.output_name, meshes, n_meshes);
-    printf("generated %s successfully!\n", ctx.output_name);
+    printf("[*] generated %s successfully!\n", ctx.output_name);
 
     for (uint32_t i = 0; i < n_meshes; i++) {
         delete_mesh(&meshes[i]);

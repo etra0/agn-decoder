@@ -21,7 +21,7 @@ size_t count_char(uint8_t *arr, size_t sz, uint8_t c) {
     return count;
 }
 
-bool texture_can_ignore_path(const char *p) {
+static bool texture_can_ignore_path(const char *p) {
     const char *ignorable_paths[] = {
         "shadow.png", "shadow_animated.png", "model"
     };
@@ -48,6 +48,7 @@ bool validate_hook(uint8_t *hook) {
     return true;
 }
 
+/* The hook is the actual key that's used to decrypt the rest of the file. */
 void calculate_hook(const struct texture *textures, size_t n_textures, uint8_t *hook) {
     const struct texture *largest_texture = NULL;
     size_t data_size = 0;
@@ -58,7 +59,7 @@ void calculate_hook(const struct texture *textures, size_t n_textures, uint8_t *
             largest_texture = &textures[i];
         }
     }
-    printf("Size of largest texture = %zu\n", largest_texture->size);
+    printf("[*] Size of largest texture = %zu\n", largest_texture->size);
 
     assert(largest_texture != NULL);
     fseek(largest_texture->f, largest_texture->size / 2, SEEK_SET);
@@ -71,6 +72,12 @@ void calculate_hook(const struct texture *textures, size_t n_textures, uint8_t *
             break;
         }
     } while (!validate_hook(hook));
+
+    printf("[*] HOOK KEY: ");
+    for (int i = 0; i < HOOK_SIZE; i++) {
+        printf("%d ", hook[i]);
+    }
+    printf("\n");
 }
 
 void texture_free(struct texture *t) {
