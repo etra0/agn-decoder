@@ -142,31 +142,30 @@ void parse_all_mesh(struct context *ctx, struct mesh **m, uint32_t *n_meshes) {
 
     parse_header(f, &k, hook, hook_size);
 
-    // Some kind of offset?
-    uint32_t cmho = 128;
+    uint32_t header_size = 128;
+
+    long last_file_position = ftell(f);
 
     uint64_t file_size = get_file_size(f);
-    uint64_t rest_file = file_size - cmho;
-    fseek(f, cmho, SEEK_SET);
+    uint64_t rest_file = file_size - header_size;
+    fseek(f, header_size, SEEK_SET);
     unsigned char *data = malloc(sizeof(char) * rest_file);
     fread(data, sizeof(char), rest_file, f);
     unsigned char *data_decoded = decode(data, rest_file, k.key, k.key_len);
 
     // Rewrite temp file
     FILE *temp = tmpfile();
-    unsigned char *merger = malloc(sizeof(char) * cmho);
+    unsigned char *merger = malloc(sizeof(char) * header_size);
     fseek(f, 0, SEEK_SET);
-    fread(merger, sizeof(char), cmho, f);
-    fwrite(merger, sizeof(char), cmho, temp);
+    fread(merger, sizeof(char), header_size, f);
+    fwrite(merger, sizeof(char), header_size, temp);
     fwrite(data_decoded, sizeof(char), rest_file, temp);
 
     free(data_decoded); free(merger); free(data);
     fclose(f);
     ctx->model = temp;
 
-    fseek(ctx->model, 0, SEEK_SET);
-    parse_header(ctx->model, &k, hook, hook_size);
-
+    fseek(ctx->model, last_file_position, SEEK_SET);
     read_metatag(ctx->model);
     read_metatag(ctx->model);
 
